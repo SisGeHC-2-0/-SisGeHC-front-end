@@ -185,10 +185,10 @@ export default function CertificadosEhorasComplementares() {
   const [openModal, setOpenModal] = useState(false);
 
   return (
-    <section className="min-h-screen flex justify-center px-2">
+    <section className="w-full flex ">
       <Tabs
         defaultValue="account"
-        className=" w-full flex flex-col gap-10 max-w-[1200px]"
+        className=" w-full flex flex-col gap-10 max-w-[1222px]"
       >
         <TabsList className="grid w-full grid-cols-2 max-w-[550px]">
           <TabsTrigger value="horasComplementares">
@@ -211,7 +211,7 @@ export default function CertificadosEhorasComplementares() {
               </p>
             </div>
           </button>
-          <ScrollArea className="w-full max-h-[710px] border rounded-lg">
+          <ScrollArea className="w-full h-[calc(100vh-300px)] border rounded-lg">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-gray-100 text-gray-700">
