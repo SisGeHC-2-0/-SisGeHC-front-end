@@ -11,6 +11,7 @@ type Event = {
   location: string;
   organizer: string;
   image: StaticImageData;
+  curso: string;
 };
 
 const BoxEvents = ({ events }: { events: Event[] }) => {
@@ -19,7 +20,7 @@ const BoxEvents = ({ events }: { events: Event[] }) => {
       {events.map((event: Event) => (
         <article key={event.id}>
           <h3 className="font-bold ml-[50px] py-5 text-[#3F4047] text-[25px]">
-            COMPUTAÇÃO
+            {event.curso}
           </h3>
           <div className="max-w-[1050px] mx-auto">
             <div className="flex items-center justify-between">
