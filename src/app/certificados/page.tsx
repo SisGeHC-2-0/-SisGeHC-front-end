@@ -187,7 +187,7 @@ export default function CertificadosEhorasComplementares() {
   return (
     <section className="w-full flex ">
       <Tabs
-        defaultValue="account"
+        defaultValue="submissaoDeCertificados"
         className=" w-full flex flex-col gap-10 max-w-[1222px]"
       >
         <TabsList className="grid w-full grid-cols-2 max-w-[550px]">

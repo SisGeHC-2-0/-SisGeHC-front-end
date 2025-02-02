@@ -2,6 +2,7 @@ import {
   IconCalendarCheck,
   IconCalendarUp,
   IconCalendarWeek,
+  IconUserCircle,
 } from "@tabler/icons-react";
 import Link from "next/link";
 
@@ -17,6 +18,9 @@ export const LeftNavBar = () => {
         </Link>
         <Link href={""}>
           <IconCalendarUp stroke={2} size={42} color="#fff" />
+        </Link>
+        <Link href={"/perfil"}>
+          <IconUserCircle stroke={2} size={42} color="#fff" />
         </Link>
       </section>
     </>
