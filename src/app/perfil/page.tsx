@@ -26,6 +26,7 @@ const mockEvents = [
     location: "Auditório Paulo Petróla 08:00",
     organizer: "PET Computação UECE",
     image: EventeImage,
+    curso: "COMPUTAÇÃO",
   },
   {
     id: 2,
@@ -34,6 +35,7 @@ const mockEvents = [
     location: "Campus Itaperi - 09:00",
     organizer: "Departamento de Computação",
     image: EventeImage,
+    curso: "COMPUTAÇÃO",
   },
   {
     id: 3,
@@ -42,6 +44,7 @@ const mockEvents = [
     location: "Campus Itaperi - 09:00",
     organizer: "Departamento de Computação",
     image: EventeImage,
+    curso: "COMPUTAÇÃO",
   },
   {
     id: 4,
@@ -50,6 +53,7 @@ const mockEvents = [
     location: "Campus Itaperi - 09:00",
     organizer: "Departamento de Computação",
     image: EventeImage,
+    curso: "COMPUTAÇÃO",
   },
   {
     id: 5,
@@ -58,6 +62,7 @@ const mockEvents = [
     location: "Campus Itaperi - 09:00",
     organizer: "Departamento de Computação",
     image: EventeImage,
+    curso: "COMPUTAÇÃO",
   },
 ];
 
