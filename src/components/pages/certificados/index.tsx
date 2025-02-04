@@ -20,18 +20,31 @@ export default function SubmitCertificateForm() {
 
   const onSubmit = async (data: any) => {
     const formData = new FormData();
-    formData.append("tipoHora", data.tipoHora);
-    formData.append("quantidadeHoras", data.quantidadeHoras);
-    formData.append("descricao", data.descricao);
-    if (data.arquivo && data.arquivo.length > 0) {
-      formData.append("arquivo", data.arquivo[0]);
+
+    formData.append("workload", data.quantidadeHoras);
+    formData.append("description", data.descricao);
+    formData.append("ActivityTypeId", "1");
+
+    if (data.arquivo && data.arquivo[0]) {
+      formData.append("certificateId.file", data.arquivo[0]);
     }
 
+    formData.append("certificateId.studentId", "1");
+    formData.append("certificateId.eventId", "2");
+
+    // Gerando a data atual no formato correto
+    const emissionDate = new Date().toISOString();
+    formData.append("certificateId.emission_date", emissionDate);
+
     try {
-      const response = await fetch("/api/certificates", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        "http://127.0.0.1:8000/complementary_activity/",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
       if (response.ok) {
         alert("Certificado enviado com sucesso!");
       } else {
@@ -45,6 +58,7 @@ export default function SubmitCertificateForm() {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
+      encType="multipart/form-data"
       className="max-w-full w-full mx-auto bg-white rounded-lg shadow-md"
     >
       <Label className="block mb-2 text-[25px] text-green-800">
@@ -91,9 +105,10 @@ export default function SubmitCertificateForm() {
       <Input
         type="file"
         accept=".pdf"
-        className="w-full  border-green-800"
-        {...register("arquivo")}
+        className="w-full border-green-800"
+        {...register("arquivo", { required: true })}
       />
+
       <p className="text-sm text-gray-600">Apenas arquivos .pdf</p>
 
       <div className="flex items-center mt-4">
