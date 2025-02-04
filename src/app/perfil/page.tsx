@@ -12,59 +12,12 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Image from "next/image";
 import { ScanQrCode } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import EventeImage from "@/imgs/eventimage.png";
 import { IconListDetails } from "@tabler/icons-react";
 import BoxEvents from "@/components/boxEventsProfile";
 import BoxEventsConclued from "@/components/boxEventsConclued";
 
-const mockEvents = [
-  {
-    id: 1,
-    title: "SECOMP 2025",
-    date: "05 a 09 de Maio de 2025",
-    location: "Auditório Paulo Petróla 08:00",
-    organizer: "PET Computação UECE",
-    image: EventeImage,
-    curso: "COMPUTAÇÃO",
-  },
-  {
-    id: 2,
-    title: "Hackathon UECE",
-    date: "15 a 17 de Junho de 2025",
-    location: "Campus Itaperi - 09:00",
-    organizer: "Departamento de Computação",
-    image: EventeImage,
-    curso: "COMPUTAÇÃO",
-  },
-  {
-    id: 3,
-    title: "WGESAD 2025",
-    date: "15 a 17 de Junho de 2025",
-    location: "Campus Itaperi - 09:00",
-    organizer: "Departamento de Computação",
-    image: EventeImage,
-    curso: "COMPUTAÇÃO",
-  },
-  {
-    id: 4,
-    title: "Hackathon UECE",
-    date: "15 a 17 de Junho de 2025",
-    location: "Campus Itaperi - 09:00",
-    organizer: "Departamento de Computação",
-    image: EventeImage,
-    curso: "COMPUTAÇÃO",
-  },
-  {
-    id: 5,
-    title: "Hackathon UECE",
-    date: "15 a 17 de Junho de 2025",
-    location: "Campus Itaperi - 09:00",
-    organizer: "Departamento de Computação",
-    image: EventeImage,
-    curso: "COMPUTAÇÃO",
-  },
-];
 
 const ModalFormsCertificados = ({
   openModal,
@@ -99,6 +52,29 @@ const ModalFormsCertificados = ({
 };
 export default function CertificadosEhorasComplementares() {
   const [openModal, setOpenModal] = useState(false);
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Buscar os eventos do backend
+  const fetchEvents = async () => {
+    try {
+      const response = await fetch("http://localhost:8000/event/"); // Endpoint da API
+      if (!response.ok) {
+        throw new Error(`Erro: ${response.status} - ${response.statusText}`);
+      }
+      const data = await response.json();
+      setEvents(data); // Atualiza o estado com os eventos
+    } catch (error) {
+      console.error("Erro ao buscar eventos:", error.message);
+    } finally {
+      setLoading(false); // Finaliza o carregamento
+    }
+  };
+
+  // Busca os eventos quando o componente é montado
+  useEffect(() => {
+    fetchEvents();
+  }, []);
 
   return (
     <section className="w-full flex">
@@ -126,7 +102,7 @@ export default function CertificadosEhorasComplementares() {
             Seus Eventos
           </h2>
           <ScrollArea className="w-full h-[calc(100vh-300px)] border rounded-lg">
-            <BoxEvents events={mockEvents} />
+            <BoxEvents events={events} />
             <ScrollBar orientation="horizontal" />
           </ScrollArea>
         </TabsContent>
@@ -135,7 +111,7 @@ export default function CertificadosEhorasComplementares() {
             Eventos anteriores
           </h2>
           <ScrollArea className="w-full h-[calc(100vh-300px)] border rounded-lg">
-            <BoxEventsConclued events={mockEvents} />;
+            <BoxEventsConclued events={events} />;
             <ScrollBar orientation="horizontal" />
           </ScrollArea>
         </TabsContent>

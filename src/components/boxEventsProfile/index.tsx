@@ -10,7 +10,7 @@ type Event = {
   date: string;
   location: string;
   organizer: string;
-  image: StaticImageData;
+  image: StaticImageData | string;
   curso: string;
 };
 
@@ -27,16 +27,16 @@ const BoxEvents = ({ events }: { events: Event[] }) => {
               <div className="flex gap-[30px]">
                 <Image
                   alt="banner do evento"
-                  src={event.image}
+                  src={event.picture}
                   width={330}
                   height={266}
                 />
                 <div className="flex flex-col gap-2 max-w-[296px]">
                   <h2 className="text-[#016A2F] text-[38px] font-bold">
-                    {event.title}
+                    {event.name}
                   </h2>
                   <p className="text-[19px] text-[#707070]">
-                    {event.date} {event.location}
+                    {event.date} {event.address}
                   </p>
                   <p className="text-[#707070]">
                     <span className="font-bold text-[#707070]">

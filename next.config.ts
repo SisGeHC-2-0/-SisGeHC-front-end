@@ -4,17 +4,16 @@ const nextConfig = {
   experimental: {
     appDir: true,
   },
-};
-
-module.exports = {
   images: {
     remotePatterns: [
       {
         protocol: "http",
-        hostname: "127.0.0.1",
+        hostname: "localhost",
         port: "8000",
-        pathname: "/files/certificates/**",
+        pathname: "/files/images/event/**",
       },
     ],
   },
 };
+
+module.exports = nextConfig;
