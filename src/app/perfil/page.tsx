@@ -1,4 +1,6 @@
 "use client";
+import BoxEventsConclued from "@/components/boxEventsConclued";
+import BoxEvents from "@/components/boxEventsProfile";
 import SubmitCertificateForm from "@/components/pages/certificados";
 import {
   AlertDialog,
@@ -10,13 +12,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import Image from "next/image";
-import { ScanQrCode } from "lucide-react";
-import { useState } from "react";
 import EventeImage from "@/imgs/eventimage.png";
-import { IconListDetails } from "@tabler/icons-react";
-import BoxEvents from "@/components/boxEventsProfile";
-import BoxEventsConclued from "@/components/boxEventsConclued";
+import { useState } from "react";
 
 const mockEvents = [
   {

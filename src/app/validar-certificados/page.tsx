@@ -1,23 +1,51 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 
-const data = [
-  {
-    id: 1,
-    name: "Natália Ruth Mesquita da Silva",
-    categoria: "Ensino",
-    description: "Programa de educação tutorial PET - SEDUC",
-    carga: "1.680",
-    pdfUrl: "http://127.0.0.1:8000/files/certificates/PDF-teste_S3GyuDm.pdf",
-  },
-];
+interface Certificate {
+  id: number;
+  student_name: string;
+  activity_name: string;
+  description: string;
+  workload: number;
+  certificate_file: string;
+}
 
 export default function ValidarCertificados() {
+  const [certificates, setCertificates] = useState<Certificate[]>([]);
   const [openRow, setOpenRow] = useState<number | null>(null);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await fetch(
+          "http://127.0.0.1:8000/complementary_activity/coordenador/2"
+        );
+        const data = await response.json();
+
+        // Verifica se a resposta é um array ou um único objeto
+        const formattedData = Array.isArray(data) ? data : [data];
+
+        setCertificates(
+          formattedData.map((item, index) => ({
+            id: index + 1, // Garante um ID único
+            student_name: item.student_name,
+            activity_name: item.activity_name,
+            description: item.description,
+            workload: item.workload,
+            certificate_file: item.certificate_file,
+          }))
+        );
+      } catch (error) {
+        console.error("Erro ao buscar certificados:", error);
+      }
+    }
+
+    fetchData();
+  }, []);
 
   const toggleRow = (id: number) => {
     setOpenRow(openRow === id ? null : id);
@@ -47,7 +75,7 @@ export default function ValidarCertificados() {
               <thead>
                 <tr className="bg-gray-100 text-gray-700">
                   <th className="p-3 sticky top-0 bg-white z-10">Aluno</th>
-                  <th className="p-3 sticky top-0 bg-white z-10">Categoria</th>
+                  <th className="p-3 sticky top-0 bg-white z-10">Atividade</th>
                   <th className="p-3 sticky top-0 bg-white z-10">Descrição</th>
                   <th className="p-3 sticky top-0 bg-white z-10">
                     Carga horária
@@ -56,24 +84,23 @@ export default function ValidarCertificados() {
               </thead>
 
               <tbody>
-                {data.map((item, index) => (
-                  <>
+                {certificates.map((item) => (
+                  <React.Fragment key={item.id}>
                     <tr
-                      key={index}
                       className="border-t cursor-pointer hover:bg-gray-100"
                       onClick={() => toggleRow(item.id)}
                     >
-                      <td className="px-3 py-4">{item.name}</td>
-                      <td className="px-3 py-4">{item.categoria}</td>
+                      <td className="px-3 py-4">{item.student_name}</td>
+                      <td className="px-3 py-4">{item.activity_name}</td>
                       <td className="px-3 py-4">{item.description}</td>
-                      <td className="px-3 py-4">{item.carga}</td>
+                      <td className="px-3 py-4">{item.workload}</td>
                     </tr>
                     {openRow === item.id && (
                       <tr>
                         <td colSpan={4} className="p-4 bg-gray-50 border-t">
                           <div className="mb-4">
                             <iframe
-                              src="http://127.0.0.1:8000/files/certificates/PDF-teste_S3GyuDm.pdf"
+                              src={item.certificate_file}
                               width="100%"
                               height="500px"
                               className="border rounded-lg"
@@ -86,7 +113,7 @@ export default function ValidarCertificados() {
                         </td>
                       </tr>
                     )}
-                  </>
+                  </React.Fragment>
                 ))}
               </tbody>
             </table>
