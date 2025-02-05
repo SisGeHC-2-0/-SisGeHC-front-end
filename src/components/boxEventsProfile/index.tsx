@@ -17,10 +17,12 @@ type Event = {
 const BoxEvents = ({ events }: { events: Event[] }) => {
   return (
     <>
-      {events.map((event: Event) => (
+      {events
+      .filter((events) => events.ended === false)
+      .map((event: Event) => (
         <article key={event.id}>
           <h3 className="font-bold ml-[50px] py-5 text-[#3F4047] text-[25px]">
-            {event.curso}
+            {event.professor.major.name}
           </h3>
           <div className="max-w-[1050px] mx-auto">
             <div className="flex items-center justify-between">

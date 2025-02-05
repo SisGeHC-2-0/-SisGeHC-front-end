@@ -17,26 +17,28 @@ type Event = {
 const BoxEventsConclued = ({ events }: { events: Event[] }) => {
   return (
     <>
-      {events.map((event: Event) => (
+      {events
+      .filter((events) => events.ended === true) // Filtro
+      .map((event: Event) => (
         <article key={event.id}>
           <h3 className="font-bold ml-[50px] py-5 text-[#3F4047] text-[25px]">
-            {event.curso}
+            {event.professor.major.name}
           </h3>
           <div className="max-w-[1050px] mx-auto">
             <div className="flex items-center justify-between">
               <div className="flex gap-[30px]">
                 <Image
                   alt="banner do evento"
-                  src={event.image}
+                  src={event.picture}
                   width={330}
                   height={266}
                 />
                 <div className="flex flex-col gap-2 max-w-[296px]">
                   <h2 className="text-[#016A2F] text-[38px] font-bold">
-                    {event.title}
+                    {event.name}
                   </h2>
                   <p className="text-[19px] text-[#707070]">
-                    {event.date} {event.location}
+                    {event.date} {event.addres}
                   </p>
                   <p className="text-[#707070]">
                     <span className="font-bold text-[#707070]">
