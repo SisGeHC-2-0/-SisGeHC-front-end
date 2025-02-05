@@ -26,12 +26,11 @@ export default function ValidarCertificados() {
         );
         const data = await response.json();
 
-        // Verifica se a resposta é um array ou um único objeto
         const formattedData = Array.isArray(data) ? data : [data];
 
         setCertificates(
           formattedData.map((item, index) => ({
-            id: index + 1, // Garante um ID único
+            id: item.id,
             student_name: item.student_name,
             activity_name: item.activity_name,
             description: item.description,
@@ -49,6 +48,25 @@ export default function ValidarCertificados() {
 
   const toggleRow = (id: number) => {
     setOpenRow(openRow === id ? null : id);
+  };
+
+  const handleAction = async (id: number, status: boolean) => {
+    try {
+      await fetch(`http://127.0.0.1:8000/complementary_activity/${id}/`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          status: status,
+          feedback: "",
+        }),
+      });
+
+      setCertificates(certificates.filter((item) => item.id !== id));
+    } catch (error) {
+      console.error("Erro ao enviar resposta:", error);
+    }
   };
 
   return (
@@ -107,8 +125,18 @@ export default function ValidarCertificados() {
                             />
                           </div>
                           <div className="flex justify-end gap-4">
-                            <Button variant="destructive">Recusar</Button>
-                            <Button variant="default">Aceitar</Button>
+                            <Button
+                              variant="destructive"
+                              onClick={() => handleAction(item.id, false)}
+                            >
+                              Recusar
+                            </Button>
+                            <Button
+                              variant="default"
+                              onClick={() => handleAction(item.id, true)}
+                            >
+                              Aceitar
+                            </Button>
                           </div>
                         </td>
                       </tr>
