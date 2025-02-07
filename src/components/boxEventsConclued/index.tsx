@@ -38,7 +38,7 @@ const BoxEventsConclued = ({ events }: { events: Event[] }) => {
                     {event.name}
                   </h2>
                   <p className="text-[19px] text-[#707070]">
-                    {event.date} {event.addres}
+                    {event.date} {event.address}
                   </p>
                   <p className="text-[#707070]">
                     <span className="font-bold text-[#707070]">
