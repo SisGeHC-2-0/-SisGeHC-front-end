@@ -4,6 +4,14 @@ import React, { useState, useEffect } from "react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
 interface Certificate {
   id: number;
@@ -16,7 +24,9 @@ interface Certificate {
 
 export default function ValidarCertificados() {
   const [certificates, setCertificates] = useState<Certificate[]>([]);
-  const [openRow, setOpenRow] = useState<number | null>(null);
+  const [selectedCertificate, setSelectedCertificate] =
+    useState<Certificate | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
@@ -46,8 +56,9 @@ export default function ValidarCertificados() {
     fetchData();
   }, []);
 
-  const toggleRow = (id: number) => {
-    setOpenRow(openRow === id ? null : id);
+  const toggleRow = (certificate: Certificate) => {
+    setSelectedCertificate(certificate);
+    setIsDialogOpen(true);
   };
 
   const handleAction = async (id: number, status: boolean) => {
@@ -64,6 +75,7 @@ export default function ValidarCertificados() {
       });
 
       setCertificates(certificates.filter((item) => item.id !== id));
+      setIsDialogOpen(false);
     } catch (error) {
       console.error("Erro ao enviar resposta:", error);
     }
@@ -103,45 +115,16 @@ export default function ValidarCertificados() {
 
               <tbody>
                 {certificates.map((item) => (
-                  <React.Fragment key={item.id}>
-                    <tr
-                      className="border-t cursor-pointer hover:bg-gray-100"
-                      onClick={() => toggleRow(item.id)}
-                    >
-                      <td className="px-3 py-4">{item.student_name}</td>
-                      <td className="px-3 py-4">{item.activity_name}</td>
-                      <td className="px-3 py-4">{item.description}</td>
-                      <td className="px-3 py-4">{item.workload}</td>
-                    </tr>
-                    {openRow === item.id && (
-                      <tr>
-                        <td colSpan={4} className="p-4 bg-gray-50 border-t">
-                          <div className="mb-4">
-                            <iframe
-                              src={item.certificate_file}
-                              width="100%"
-                              height="500px"
-                              className="border rounded-lg"
-                            />
-                          </div>
-                          <div className="flex justify-end gap-4">
-                            <Button
-                              variant="destructive"
-                              onClick={() => handleAction(item.id, false)}
-                            >
-                              Recusar
-                            </Button>
-                            <Button
-                              variant="default"
-                              onClick={() => handleAction(item.id, true)}
-                            >
-                              Aceitar
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    )}
-                  </React.Fragment>
+                  <tr
+                    key={item.id}
+                    className="border-t cursor-pointer hover:bg-gray-100"
+                    onClick={() => toggleRow(item)}
+                  >
+                    <td className="px-3 py-4">{item.student_name}</td>
+                    <td className="px-3 py-4">{item.activity_name}</td>
+                    <td className="px-3 py-4">{item.description}</td>
+                    <td className="px-3 py-4">{item.workload}</td>
+                  </tr>
                 ))}
               </tbody>
             </table>
@@ -149,6 +132,44 @@ export default function ValidarCertificados() {
           </ScrollArea>
         </TabsContent>
       </Tabs>
+
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-[95vw] max-h-[95vh] w-full h-full overflow-auto">
+          <DialogHeader>
+            <DialogTitle>Visualizar Certificado</DialogTitle>
+          </DialogHeader>
+          {selectedCertificate && (
+            <div className="mb-4 h-full">
+              <iframe
+                src={selectedCertificate.certificate_file}
+                width="100%"
+                height="100%"
+                className="border rounded-lg min-h-[80vh]"
+              />
+            </div>
+          )}
+          <DialogFooter>
+            <Button
+              variant="destructive"
+              onClick={() =>
+                selectedCertificate &&
+                handleAction(selectedCertificate.id, false)
+              }
+            >
+              Recusar
+            </Button>
+            <Button
+              variant="default"
+              onClick={() =>
+                selectedCertificate &&
+                handleAction(selectedCertificate.id, true)
+              }
+            >
+              Aceitar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </section>
   );
 }
