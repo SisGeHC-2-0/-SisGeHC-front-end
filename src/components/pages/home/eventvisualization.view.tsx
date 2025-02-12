@@ -16,7 +16,7 @@ export default function EventView() {
 
   const fetchEvents = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/event/?major_name=${majorName}`);
+      const response = await fetch("http://localhost:8000/event/");
       if (!response.ok) {
         throw new Error(`Erro: ${response.status} - ${response.statusText}`);
       }
