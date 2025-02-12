@@ -123,7 +123,7 @@ export default function ValidarCertificados() {
                     <td className="px-3 py-4">{item.student_name}</td>
                     <td className="px-3 py-4">{item.activity_name}</td>
                     <td className="px-3 py-4">{item.description}</td>
-                    <td className="px-3 py-4">{item.workload}</td>
+                    <td className="px-3 py-4">{item.workload} h</td>
                   </tr>
                 ))}
               </tbody>
