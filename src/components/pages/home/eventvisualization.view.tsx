@@ -13,7 +13,6 @@ export default function EventView() {
 
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [majorName, setMajorName] = useState('');  // Estado para armazenar o filtro
 
   const fetchEvents = async () => {
     try {
@@ -32,20 +31,7 @@ export default function EventView() {
 
   useEffect(() => {
     fetchEvents();
-  }, [majorName]);
-
-  // return (
-  //   <div className="max-w-4xl mx-auto">
-  //     <h2 className="text-center text-2xl font-bold mb-4">
-  //       {loading ? "Evento": events[0]?.professor.major.name || "Cursos"}
-  //     </h2>
-  //     {loading ? (
-  //       <div>Carregando...</div>
-  //     ) : (
-  //       <MyCarousel events={events} />
-  //     )}
-  //   </div>
-  // );
+  }, []);
 
   return (
     <div className="max-w-4xl mx-auto">
