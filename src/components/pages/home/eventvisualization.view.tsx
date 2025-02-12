@@ -13,10 +13,11 @@ export default function EventView() {
 
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [majorName, setMajorName] = useState('');  // Estado para armazenar o filtro
 
   const fetchEvents = async () => {
     try {
-      const response = await fetch("http://localhost:8000/event/");
+      const response = await fetch(`http://localhost:8000/event/?major_name=${majorName}`);
       if (!response.ok) {
         throw new Error(`Erro: ${response.status} - ${response.statusText}`);
       }
@@ -31,7 +32,7 @@ export default function EventView() {
 
   useEffect(() => {
     fetchEvents();
-  }, []);
+  }, [majorName]);
 
   // return (
   //   <div className="max-w-4xl mx-auto">
@@ -57,7 +58,8 @@ export default function EventView() {
       ) : (
         Object.entries(
           events.reduce((acc, event) => {
-            const curso = event.professor.major.name;
+            const curso = event.professorId.major.name;
+            // const curso = event.professorId
             if (!acc[curso]) acc[curso] = [];
             acc[curso].push(event);
             return acc;
