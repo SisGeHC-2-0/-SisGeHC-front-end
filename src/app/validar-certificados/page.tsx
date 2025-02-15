@@ -106,7 +106,7 @@ export default function ValidarCertificados() {
                 <tr className="bg-gray-100 text-gray-700">
                   <th className="p-3 sticky top-0 bg-white z-10">Aluno</th>
                   <th className="p-3 sticky top-0 bg-white z-10">Atividade</th>
-                  <th className="p-3 sticky top-0 bg-white z-10">Descrição</th>
+                  <th className="p-3 sticky top-0 bg-white z-10">Titulo</th>
                   <th className="p-3 sticky top-0 bg-white z-10">
                     Carga horária
                   </th>

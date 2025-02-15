@@ -34,12 +34,25 @@ export default function EventForm() {
   const [enrollDateEnd, setEnrollDateEnd] = useState<Date | undefined>(
     undefined
   );
+  const [eventDate, setEventDate] = useState<Date | undefined>(undefined);
+  const [eventTimeBegin, setEventTimeBegin] = useState<string>("08:30");
+  const [eventTimeEnd, setEventTimeEnd] = useState<string>("11:00");
 
   const onSubmit = async (data: any) => {
-    // Cria um objeto FormData
+    if (!eventDate) {
+      alert("Por favor, selecione uma data para o evento.");
+      return;
+    }
+
     const formData = new FormData();
 
-    // Adiciona os campos ao FormData
+    const fileInput = document.querySelector(
+      'input[type="file"]'
+    ) as HTMLInputElement;
+    if (fileInput && fileInput.files && fileInput.files[0]) {
+      formData.append("picture", fileInput.files[0]);
+    }
+
     formData.append("name", data.name);
     formData.append("desc_short", data.desc_short);
     formData.append("desc_detailed", data.desc_detailed);
@@ -56,43 +69,57 @@ export default function EventForm() {
     formData.append("maximum_enrollments", String(data.maximum_enrollments));
     formData.append("address", data.address);
     formData.append("is_online", data.is_online);
-    formData.append("ActivityTypeId_id", "1");
-
-    // Adiciona o arquivo (picture) ao FormData
-    if (data.picture && data.picture[0]) {
-      formData.append("picture", data.picture[0]);
-    }
-
-    // Adiciona os dados do professor (se necessário)
-    formData.append("professor[id]", "2");
-    formData.append("professor[name]", "Alan Turing");
-    formData.append("professor[email]", "alanturing@uece.com");
-    formData.append("professor[enrollment_number]", "010102200101");
-    formData.append("professor[major][id]", "2");
-    formData.append("professor[major][name]", "Computer Science");
+    formData.append("ActivityTypeId", "1");
+    formData.append("professorId", "1");
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/event/", {
+      const eventResponse = await fetch("http://127.0.0.1:8000/event/", {
         method: "POST",
-        body: formData, // Envia o FormData
+        body: formData,
       });
 
-      if (response.ok) {
-        alert("Evento enviado com sucesso!");
-      } else {
+      if (!eventResponse.ok) {
+        const errorData = await eventResponse.json();
+        console.error("Erro na resposta da API:", errorData);
         alert("Erro ao enviar evento.");
+        return;
+      }
+
+      const eventData = await eventResponse.json();
+      const eventId = eventData.id;
+
+      const datePayload = {
+        eventId: eventId,
+        time_begin: eventTimeBegin + ":00",
+        time_end: eventTimeEnd + ":00",
+        date: format(eventDate, "yyyy-MM-dd"),
+      };
+
+      const dateResponse = await fetch("http://127.0.0.1:8000/event_date/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(datePayload),
+      });
+
+      if (dateResponse.ok) {
+        alert("Evento e datas enviados com sucesso!");
+      } else {
+        const errorData = await dateResponse.json();
+        console.error("Erro ao enviar datas do evento:", errorData);
+        alert("Erro ao enviar datas do evento.");
       }
     } catch (error) {
       console.error("Erro na requisição:", error);
+      alert("Erro ao processar a requisição.");
     }
   };
-
   return (
-    <ScrollArea className="w-full h-[calc(100vh-300px)] border rounded-lg">
+    <ScrollArea className="w-full  border rounded-lg">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        encType="multipart/form-data" // Adicione esta linha
-        className="max-w-lg mx-auto bg-white p-8 rounded-lg shadow-lg"
+        className="max-w-lg mx-auto bg-white p-8 rounded-lg "
       >
         <div className="space-y-6">
           <div>
@@ -159,6 +186,7 @@ export default function EventForm() {
                 type="file"
                 {...register("picture", { required: true })}
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                accept="image/*"
               />
               <div className="text-center">
                 <svg
@@ -317,7 +345,65 @@ export default function EventForm() {
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
+          <div>
+            <Label className="block text-sm font-medium text-gray-700 mb-1">
+              Data do Evento
+            </Label>
+            <div className="flex items-center gap-2">
+              <Input
+                value={eventDate ? format(eventDate, "dd-MM-yyyy") : ""}
+                readOnly
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="p-2 border border-gray-300 rounded-md hover:bg-gray-100"
+                  >
+                    <CalendarIcon className="w-5 h-5" />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="flex justify-center flex-col items-center w-[350px]">
+                  <DialogHeader>
+                    <DialogTitle>Selecione a data do evento</DialogTitle>
+                  </DialogHeader>
+                  <Calendar
+                    mode="single"
+                    selected={eventDate}
+                    onSelect={(date) => {
+                      setEventDate(date);
+                    }}
+                  />
+                </DialogContent>
+              </Dialog>
+            </div>
+          </div>
 
+          <div>
+            <Label className="block text-sm font-medium text-gray-700 mb-1">
+              Horário de Início
+            </Label>
+            <Input
+              type="time"
+              value={eventTimeBegin}
+              onChange={(e) => setEventTimeBegin(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div>
+            <Label className="block text-sm font-medium text-gray-700 mb-1">
+              Horário de Término
+            </Label>
+            <Input
+              type="time"
+              value={eventTimeEnd}
+              onChange={(e) => setEventTimeEnd(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
           <Button
             type="submit"
             className="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"

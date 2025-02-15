@@ -32,7 +32,6 @@ export default function SubmitCertificateForm() {
     formData.append("certificateId.studentId", "1");
     formData.append("certificateId.eventId", "2");
 
-    // Gerando a data atual no formato correto
     const emissionDate = new Date().toISOString();
     formData.append("certificateId.emission_date", emissionDate);
 
