@@ -41,15 +41,13 @@ export default function CertificadosEhorasComplementares() {
       </h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {/* Botão para adicionar evento */}
         <button onClick={() => setOpenModal(true)} className="w-full">
-          <div className="flex justify-center items-center rounded-[12px] border-[#DCDCDC] border flex-col gap-3 min-h-[386px] w-full">
+          <div className="flex justify-center items-center rounded-[12px] border-[#DCDCDC] border flex-col gap-3 min-h-[386px] ">
             <IconCirclePlusFilled size={100} color="#2F962F" />
             <p className="text-[#2F962F] text-[24px] font-bold">Novo Evento</p>
           </div>
         </button>
 
-        {/* Renderização dos eventos */}
         {events.map((event) => (
           <EventCard key={event.id} event={event} />
         ))}
@@ -96,7 +94,7 @@ const EventCard = ({ event }: any) => {
           {is_online ? "ONLINE" : "PRESENCIAL"}
         </h2>
 
-        <div>
+        <div className="">
           <h3 className="text-green-700 font-bold text-lg">{name}</h3>
           <p className="text-gray-600 text-sm">{desc_short}</p>
           <p className="text-gray-600 text-sm">{address}</p>
