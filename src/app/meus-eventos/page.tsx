@@ -19,7 +19,7 @@ export default function CertificadosEhorasComplementares() {
 
   const fetchEvents = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:8000/event/");
+      const response = await fetch("http://127.0.0.1:8000/event/professor/1");
       if (!response.ok) {
         throw new Error("Erro ao buscar eventos");
       }
@@ -33,7 +33,7 @@ export default function CertificadosEhorasComplementares() {
   useEffect(() => {
     fetchEvents();
   }, []);
-
+  console.log("Eventos", events);
   return (
     <section className="w-full px-4">
       <h2 className="text-[#3F4047] text-[16px] mb-4 mt-5 font-extrabold">
