@@ -1,4 +1,5 @@
 "use client";
+import { useEffect, useState } from "react";
 import BoxEventsConclued from "@/components/boxEventsConclued";
 import BoxEvents from "@/components/boxEventsProfile";
 import SubmitCertificateForm from "@/components/pages/certificados";
@@ -12,56 +13,43 @@ import {
 } from "@/components/ui/alert-dialog";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import EventeImage from "@/imgs/eventimage.png";
-import { useState } from "react";
 
-const mockEvents = [
-  {
-    id: 1,
-    title: "SECOMP 2025",
-    date: "05 a 09 de Maio de 2025",
-    location: "Auditório Paulo Petróla 08:00",
-    organizer: "PET Computação UECE",
-    image: EventeImage,
-    curso: "COMPUTAÇÃO",
-  },
-  {
-    id: 2,
-    title: "Hackathon UECE",
-    date: "15 a 17 de Junho de 2025",
-    location: "Campus Itaperi - 09:00",
-    organizer: "Departamento de Computação",
-    image: EventeImage,
-    curso: "COMPUTAÇÃO",
-  },
-  {
-    id: 3,
-    title: "WGESAD 2025",
-    date: "15 a 17 de Junho de 2025",
-    location: "Campus Itaperi - 09:00",
-    organizer: "Departamento de Computação",
-    image: EventeImage,
-    curso: "COMPUTAÇÃO",
-  },
-  {
-    id: 4,
-    title: "Hackathon UECE",
-    date: "15 a 17 de Junho de 2025",
-    location: "Campus Itaperi - 09:00",
-    organizer: "Departamento de Computação",
-    image: EventeImage,
-    curso: "COMPUTAÇÃO",
-  },
-  {
-    id: 5,
-    title: "Hackathon UECE",
-    date: "15 a 17 de Junho de 2025",
-    location: "Campus Itaperi - 09:00",
-    organizer: "Departamento de Computação",
-    image: EventeImage,
-    curso: "COMPUTAÇÃO",
-  },
-];
+const fetchEvents = async () => {
+  try {
+    const responseEvents = await fetch("http://127.0.0.1:8000/event/student/1");
+    const events = await responseEvents.json();
+    const responseEventDates = await fetch("http://127.0.0.1:8000/event_date/");
+    const eventDates = await responseEventDates.json();
+
+    return events.map(
+      (event: {
+        event_dates: any[];
+        id: any;
+        name: any;
+        is_online: any;
+        address: any;
+        professorId: { name: any; major: { name: any } };
+        picture: any;
+      }) => {
+        const dateInfo = eventDates.find(
+          (date: { id: any }) => date.id === event.event_dates[0]
+        );
+        return {
+          id: event.id,
+          title: event.name,
+          date: dateInfo ? dateInfo.date : "Data não disponível",
+          location: event.is_online ? "Online" : event.address,
+          organizer: event.professorId.name,
+          image: event.picture,
+          curso: event.professorId.major.name,
+        };
+      }
+    );
+  } catch (error) {
+    console.error("Erro ao buscar eventos:", error);
+    return [];
+  }
+};
 
 const ModalFormsCertificados = ({
   openModal,
@@ -94,14 +82,20 @@ const ModalFormsCertificados = ({
     </div>
   );
 };
+
 export default function CertificadosEhorasComplementares() {
   const [openModal, setOpenModal] = useState(false);
+  const [events, setEvents] = useState([]);
+
+  useEffect(() => {
+    fetchEvents().then(setEvents);
+  }, []);
 
   return (
     <section className="w-full flex">
       <Tabs
         defaultValue="EventosInscritos"
-        className=" w-full flex flex-col  max-w-[1222px]"
+        className=" w-full flex flex-col max-w-[1222px]"
       >
         <TabsList className="grid w-full grid-cols-2 max-w-[550px]">
           <TabsTrigger
@@ -123,7 +117,7 @@ export default function CertificadosEhorasComplementares() {
             Seus Eventos
           </h2>
           <ScrollArea className="w-full h-[calc(100vh-300px)] border rounded-lg">
-            <BoxEvents events={mockEvents} />
+            <BoxEvents events={events} />
             <ScrollBar orientation="horizontal" />
           </ScrollArea>
         </TabsContent>
@@ -132,7 +126,7 @@ export default function CertificadosEhorasComplementares() {
             Eventos anteriores
           </h2>
           <ScrollArea className="w-full h-[calc(100vh-300px)] border rounded-lg">
-            <BoxEventsConclued events={mockEvents} />;
+            <BoxEventsConclued events={events} />
             <ScrollBar orientation="horizontal" />
           </ScrollArea>
         </TabsContent>

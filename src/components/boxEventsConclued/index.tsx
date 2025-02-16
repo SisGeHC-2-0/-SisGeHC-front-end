@@ -1,20 +1,33 @@
 "use client";
-import Image, { StaticImageData } from "next/image";
+import Image from "next/image";
 import { ScanQrCode } from "lucide-react";
 import { IconCertificate, IconListDetails } from "@tabler/icons-react";
+import { format, parseISO } from "date-fns";
+import { ptBR } from "date-fns/locale";
 import EventButton from "../boxEventsProfile/eventsButton";
 
 type Event = {
   id: number;
   title: string;
-  date: string;
+  date: string | null;
   location: string;
+  time: string;
   organizer: string;
-  image: StaticImageData;
+  image: string | null;
   curso: string;
 };
 
-const BoxEventsConclued = ({ events }: { events: Event[] }) => {
+const formatDate = (dateString: string | null) => {
+  if (!dateString) return "Data não disponível";
+  try {
+    const date = parseISO(dateString);
+    return format(date, "dd 'de' MMMM 'de' yyyy", { locale: ptBR });
+  } catch {
+    return "Data inválida";
+  }
+};
+
+const BoxEvents = ({ events }: { events: Event[] }) => {
   return (
     <>
       {events.map((event: Event) => (
@@ -25,18 +38,36 @@ const BoxEventsConclued = ({ events }: { events: Event[] }) => {
           <div className="max-w-[1050px] mx-auto">
             <div className="flex items-center justify-between">
               <div className="flex gap-[30px]">
-                <Image
-                  alt="banner do evento"
-                  src={event.image}
-                  width={330}
-                  height={266}
-                />
+                {event.image && event.image.trim() !== "" ? (
+                  <div className="w-[330px] h-[266px] relative">
+                    <Image
+                      alt="banner do evento"
+                      src={
+                        event.image && event.image.trim() !== ""
+                          ? event.image
+                          : "/placeholder.jpg"
+                      }
+                      className="w-full h-full object-cover "
+                      width={330}
+                      height={266}
+                    />
+                  </div>
+                ) : (
+                  <div className="w-[330px] h-[266px] bg-gray-200 flex items-center justify-center">
+                    <span className="text-gray-500">Imagem não disponível</span>
+                  </div>
+                )}
+
                 <div className="flex flex-col gap-2 max-w-[296px]">
                   <h2 className="text-[#016A2F] text-[38px] font-bold">
                     {event.title}
                   </h2>
-                  <p className="text-[19px] text-[#707070]">
-                    {event.date} {event.location}
+                  <p className="text-[19px] text-[#707070] leading-6">
+                    {formatDate(event.date)}
+                    <br />
+                    {event.location}
+                    <br />
+                    {event.time || "Horário não disponível"}
                   </p>
                   <p className="text-[#707070]">
                     <span className="font-bold text-[#707070]">
@@ -67,4 +98,4 @@ const BoxEventsConclued = ({ events }: { events: Event[] }) => {
   );
 };
 
-export default BoxEventsConclued;
+export default BoxEvents;
