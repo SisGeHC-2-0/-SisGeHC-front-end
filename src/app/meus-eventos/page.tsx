@@ -33,7 +33,6 @@ export default function CertificadosEhorasComplementares() {
   useEffect(() => {
     fetchEvents();
   }, []);
-  console.log("Eventos", events);
   return (
     <section className="w-full px-4">
       <h2 className="text-[#3F4047] text-[16px] mb-4 mt-5 font-extrabold">
