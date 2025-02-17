@@ -45,13 +45,13 @@ const fetchData = async (
         status: boolean | null;
         workload: number;
         description: string;
-        ActivityTypeId_id: number;
+        activity_name: string;
       }) => {
         const statusInfo = getStatus(item.status);
         return {
           title: item.description,
           hours: `${item.workload} HORAS`,
-          type: `Tipo ${item.ActivityTypeId_id}`,
+          type: `Tipo ${item.activity_name}`,
           date: "13/12/2024",
           status: statusInfo.label,
           statusColor: statusInfo.color,
@@ -83,7 +83,7 @@ const ModalFormsCertificados = ({
               className="border border-green-800"
               onClick={() => setOpenModal(false)}
             >
-              Cancelar
+              Fechar
             </AlertDialogCancel>
           </AlertDialogHeader>
           <SubmitCertificateForm />

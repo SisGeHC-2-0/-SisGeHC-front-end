@@ -71,7 +71,7 @@ const ModalFormsCertificados = ({
                 className="border border-green-800"
                 onClick={() => setOpenModal(false)}
               >
-                Cancel
+                Fechar
               </AlertDialogCancel>
             </AlertDialogHeader>
             <SubmitCertificateForm />

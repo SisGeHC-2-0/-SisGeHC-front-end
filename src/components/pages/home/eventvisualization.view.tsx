@@ -1,12 +1,45 @@
 "use client";
-import EventImageHone from "@/imgs/testeimage.png";
 import { IconMenuDeep } from "@tabler/icons-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+
+import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-import { Swiper, SwiperSlide } from "swiper/react";
+
+const MyCarousel = ({
+  events,
+  enrolledEvents,
+  enrollInEvent,
+}: {
+  events: Event[];
+  enrolledEvents: number[];
+  enrollInEvent: (id: number) => void;
+}) => {
+  const slidesPerView = events.length < 4 ? events.length : 4;
+  const loop = events.length >= 4;
+
+  return (
+    <Swiper
+      spaceBetween={20}
+      autoplay
+      slidesPerView={slidesPerView}
+      loop={loop}
+      className="px-4"
+    >
+      {events.map((event) => (
+        <SwiperSlide key={event.id}>
+          <BoxEventView
+            event={event}
+            enrolledEvents={enrolledEvents}
+            enrollInEvent={enrollInEvent}
+          />
+        </SwiperSlide>
+      ))}
+    </Swiper>
+  );
+};
 
 type Major = {
   id: number;
@@ -140,34 +173,6 @@ export default function EventView() {
   );
 }
 
-const MyCarousel = ({
-  events,
-  enrolledEvents,
-  enrollInEvent,
-}: {
-  events: Event[];
-  enrolledEvents: number[];
-  enrollInEvent: (id: number) => void;
-}) => (
-  <Swiper
-    spaceBetween={20}
-    slidesPerView={4}
-    loop={true}
-    pagination={{ clickable: true }}
-    className="px-4"
-  >
-    {events.map((event) => (
-      <SwiperSlide key={event.id}>
-        <BoxEventView
-          event={event}
-          enrolledEvents={enrolledEvents}
-          enrollInEvent={enrollInEvent}
-        />
-      </SwiperSlide>
-    ))}
-  </Swiper>
-);
-
 const BoxEventView = ({
   event,
   enrolledEvents,
@@ -181,13 +186,20 @@ const BoxEventView = ({
 
   return (
     <article className="max-w-[316px] w-full min-h-[350px] border rounded-2xl shadow-lg bg-white overflow-hidden flex flex-col">
-      <Image
-        alt="bannerEvent"
-        src={EventImageHone}
-        width={316}
-        height={105}
-        className="object-cover"
-      />
+      {event.picture ? (
+        <figure className="max-h-[105px]">
+          <Image
+            alt="bannerEvent"
+            src={event.picture}
+            width={316}
+            height={105}
+            className="object-cover max-h-[105px]"
+          />
+        </figure>
+      ) : (
+        <div className="w-[316px] h-[105px] bg-gray-200" />
+      )}
+
       <div className="flex flex-col justify-start gap-2 p-4 flex-grow min-h-[130px]">
         <h2 className="text-[#016A2F] min-h-[60px] text-[24px] font-bold leading-tight break-words">
           {event.name}
