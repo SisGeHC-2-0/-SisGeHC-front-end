@@ -6,6 +6,8 @@ import { IconListDetails } from "@tabler/icons-react";
 import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
+import FlbckImage from "../utils/fallback_image";
+
 import EventButton from "@/components/boxEventsProfile/eventsButton";
 import {
   AlertDialog,
@@ -63,7 +65,7 @@ const ModalQrCode = ({
             </AlertDialogCancel>
           </AlertDialogHeader>
           <div className="flex justify-center">
-            <Image src={qrUrl} alt="QR Code" width={500} height={500} />
+            <FlbckImage src={qrUrl} alt="QR Code" width={500} height={500} fallbackText="Não é possivel gerar um QR code para esse evento no momento"/>
           </div>
           <AlertDialogFooter></AlertDialogFooter>
         </AlertDialogContent>
