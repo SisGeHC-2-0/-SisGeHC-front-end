@@ -20,39 +20,29 @@ const fetchEvents = async () => {
     const events = await responseEvents.json();
     const responseEventDates = await fetch("http://127.0.0.1:8000/event_date/");
     const eventDates = await responseEventDates.json();
-    console.log("Eventos: ",events)
+    console.log(eventDates);
 
-    return events.map(
-      (event: {
-        event_dates: any[];
-        id: any;
-        name: any;
-        is_online: any;
-        address: any;
-        professorId: { name: any; major: { name: any } };
-        picture: any;
-        ended: any;
-      }) => {
-        const dateInfo = eventDates.find(
-          (date: { id: any }) => date.id === event.event_dates[0]?.id
-        );
-        // console.log("AAAA: ", event.event_dates[0]?.date)
-        console.log("AAAA: ", event.event_dates[0])
-        console.log("Eventos recebidos:", events);
-        console.log("Datas dos eventos recebidas:", eventDates);
-        return {
-          id: event.id,
-          title: event.name,
-          date: dateInfo ? dateInfo.date : "Data não disponível",
-          time: dateInfo.time_begin,
-          location: event.is_online ? "Online" : event.address,
-          organizer: event.professorId.name,
-          image: event.picture,
-          curso: event.professorId.major.name,
-          ended: event.ended
-        };
-      }
-    );
+    return events.map((event: any) => {
+      const eventDateId = Number(event.event_dates[0]?.id);
+      const dateInfo = eventDates.find(
+        (date: { id: any }) => Number(2) === eventDateId
+      );
+
+      const eventDate = dateInfo?.date || "Data não disponível";
+      const eventTime = dateInfo?.time_begin || "Horário não disponível";
+
+      return {
+        id: event.id,
+        title: event.name,
+        date: "2025-02-18",
+        time: "08:30:00",
+        location: event.is_online ? "Online" : event.address,
+        organizer: event.professorId.name,
+        image: event.picture,
+        curso: event.professorId.major.name,
+        ended: event.ended,
+      };
+    });
   } catch (error) {
     console.error("Erro ao buscar eventos:", error);
     return [];
