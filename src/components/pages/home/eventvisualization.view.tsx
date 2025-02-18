@@ -205,12 +205,20 @@ const BoxEventView = ({
           {event.name}
         </h2>
         <div className="text-gray-600 text-sm">
-          {event.event_dates.map((date) => (
-            <div className="flex flex-col flex-wrap" key={date.id}>
-              <span>{formatEventDate(event.event_dates)}</span>
-              <span>{date.time_begin}</span>
-            </div>
-          ))}
+          <div className="flex flex-col flex-wrap">
+              {event.event_dates.map((date) => (
+                <div key={date.id}>
+                  <span>
+                    {parseDateWithoutTimezone(date.date).toLocaleDateString("pt-BR", {
+                      day: "2-digit",
+                      month: "long",
+                      year: "numeric",
+                    })}
+                  </span>
+                  <span> - {date.time_begin} às {date.time_end}</span>
+                </div>
+              ))}
+        </div>
         </div>
         <p className="text-gray-700 font-medium">
           Realização: {event.professorId.name}
@@ -236,29 +244,24 @@ const BoxEventView = ({
   );
 };
 
-const formatEventDate = (dates: EventDate[]) => {
+const parseDateWithoutTimezone = (dateString: string) => {
+  const [year, month, day] = dateString.split('-').map(Number);
+  return new Date(Date.UTC(year, month - 1, day + 1));
+};
+
+const formatEventDates = (dates: EventDate[]) => {
   if (dates.length === 0) return "";
 
-  const sortedDates = dates
-    .map((date) => new Date(date.date))
-    .sort((a, b) => a.getTime() - b.getTime());
-
-  const firstDate = sortedDates[0];
-  const lastDate = sortedDates[sortedDates.length - 1];
-
-  const options: Intl.DateTimeFormatOptions = { day: "2-digit" };
-  const monthYearOptions: Intl.DateTimeFormatOptions = {
-    month: "long",
-    year: "numeric",
-  };
-
-  const firstDay = firstDate.toLocaleDateString("pt-BR", options);
-  const lastDay = lastDate.toLocaleDateString("pt-BR", options);
-  const monthYear = firstDate.toLocaleDateString("pt-BR", monthYearOptions);
-
-  if (firstDay === lastDay) {
-    return `${firstDay} de ${monthYear}`;
-  }
-
-  return `${firstDay} a ${lastDay} de ${monthYear}`;
+  return dates
+    .map((date) => {
+      const parsedDate = parseDateWithoutTimezone(date.date);
+      return parsedDate.toLocaleDateString("pt-BR", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+      });
+    })
+    .join(", "); // Para exibir todas separadas por vírgula, ou use "\n" para quebrar linha.
 };
+
+
