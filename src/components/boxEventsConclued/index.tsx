@@ -15,6 +15,7 @@ type Event = {
   organizer: string;
   image: string | null;
   curso: string;
+  ended: boolean;
 };
 
 const formatDate = (dateString: string | null) => {
@@ -30,7 +31,8 @@ const formatDate = (dateString: string | null) => {
 const BoxEvents = ({ events }: { events: Event[] }) => {
   return (
     <>
-      {events.map((event: Event) => (
+      {events.filter((events) => events.ended === true) // Filtro.
+      .map((event: Event) => (
         <article key={event.id}>
           <h3 className="font-bold ml-[50px] py-5 text-[#3F4047] text-[25px]">
             {event.curso}
