@@ -1,4 +1,7 @@
 "use client";
+import { useEffect, useState } from "react";
+import BoxEventsConclued from "@/components/boxEventsConclued";
+import BoxEvents from "@/components/boxEventsProfile";
 import SubmitCertificateForm from "@/components/pages/certificados";
 import {
   AlertDialog,
@@ -10,14 +13,42 @@ import {
 } from "@/components/ui/alert-dialog";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import Image from "next/image";
-import { ScanQrCode } from "lucide-react";
-import { useEffect, useState } from "react";
-import EventeImage from "@/imgs/eventimage.png";
-import { IconListDetails } from "@tabler/icons-react";
-import BoxEvents from "@/components/boxEventsProfile";
-import BoxEventsConclued from "@/components/boxEventsConclued";
 
+
+const fetchEvents = async () => {
+  try {
+    const responseEvents = await fetch("http://127.0.0.1:8000/event/student/1");
+    const events = await responseEvents.json();
+    const responseEventDates = await fetch("http://127.0.0.1:8000/event_date/");
+    const eventDates = await responseEventDates.json();
+    console.log(eventDates);
+
+    return events.map((event: any) => {
+      const eventDateId = Number(event.event_dates[0]?.id);
+      const dateInfo = eventDates.find(
+        (date: { id: any }) => Number(2) === eventDateId
+      );
+
+      const eventDate = dateInfo?.date || "Data não disponível";
+      const eventTime = dateInfo?.time_begin || "Horário não disponível";
+
+      return {
+        id: event.id,
+        title: event.name,
+        date: "2025-02-18",
+        time: "08:30:00",
+        location: event.is_online ? "Online" : event.address,
+        organizer: event.professorId.name,
+        image: event.picture,
+        curso: event.professorId.major.name,
+        ended: event.ended,
+      };
+    });
+  } catch (error) {
+    console.error("Erro ao buscar eventos:", error);
+    return [];
+  }
+};
 
 const ModalFormsCertificados = ({
   openModal,
@@ -39,7 +70,7 @@ const ModalFormsCertificados = ({
                 className="border border-green-800"
                 onClick={() => setOpenModal(false)}
               >
-                Cancel
+                Fechar
               </AlertDialogCancel>
             </AlertDialogHeader>
             <SubmitCertificateForm />
@@ -50,37 +81,20 @@ const ModalFormsCertificados = ({
     </div>
   );
 };
+
 export default function CertificadosEhorasComplementares() {
   const [openModal, setOpenModal] = useState(false);
   const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
 
-  // Buscar os eventos do backend
-  const fetchEvents = async () => {
-    try {
-      const response = await fetch("http://localhost:8000/event/"); // Endpoint da API
-      if (!response.ok) {
-        throw new Error(`Erro: ${response.status} - ${response.statusText}`);
-      }
-      const data = await response.json();
-      setEvents(data); // Atualiza o estado com os eventos
-    } catch (error) {
-      console.error("Erro ao buscar eventos:", error.message);
-    } finally {
-      setLoading(false); // Finaliza o carregamento
-    }
-  };
-
-  // Busca os eventos quando o componente é montado
   useEffect(() => {
-    fetchEvents();
+    fetchEvents().then(setEvents);
   }, []);
 
   return (
     <section className="w-full flex">
       <Tabs
         defaultValue="EventosInscritos"
-        className=" w-full flex flex-col  max-w-[1222px]"
+        className=" w-full flex flex-col max-w-[1222px]"
       >
         <TabsList className="grid w-full grid-cols-2 max-w-[550px]">
           <TabsTrigger
@@ -111,7 +125,8 @@ export default function CertificadosEhorasComplementares() {
             Eventos anteriores
           </h2>
           <ScrollArea className="w-full h-[calc(100vh-300px)] border rounded-lg">
-            <BoxEventsConclued events={events} />;
+
+            <BoxEventsConclued events={events} />
             <ScrollBar orientation="horizontal" />
           </ScrollArea>
         </TabsContent>

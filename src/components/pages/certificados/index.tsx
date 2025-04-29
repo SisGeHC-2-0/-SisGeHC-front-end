@@ -1,9 +1,9 @@
 "use client";
 
-import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -11,8 +11,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { useForm } from "react-hook-form";
 
 export default function SubmitCertificateForm() {
   const { register, handleSubmit, watch, setValue } = useForm();
@@ -32,7 +32,6 @@ export default function SubmitCertificateForm() {
     formData.append("certificateId.studentId", "1");
     formData.append("certificateId.eventId", "2");
 
-    // Gerando a data atual no formato correto
     const emissionDate = new Date().toISOString();
     formData.append("certificateId.emission_date", emissionDate);
 

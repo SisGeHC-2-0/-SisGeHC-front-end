@@ -1,194 +1,112 @@
 "use client";
+
+import SubmitCertificateForm from "@/components/pages/certificados";
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { IconCirclePlusFilled } from "@tabler/icons-react";
 import { MessageCircle } from "lucide-react";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import SubmitCertificateForm from "@/components/pages/certificados";
+import { SetStateAction, useEffect, useState } from "react";
 
-const data = [
-  {
-    title: "SESCOMP 2023",
-    hours: "20 HORAS",
-    type: "EXTENSÃO",
-    date: "13/12/2023",
-    status: "Em análise",
-    statusColor: "text-yellow-500",
-  },
-  {
-    title: "SESCOMP 2024",
-    hours: "20 HORAS",
-    type: "EXTENSÃO",
-    date: "13/12/2023",
-    status: "Aprovado",
-    statusColor: "text-green-500",
-  },
-  {
-    title: "SESCOMP 2022",
-    hours: "20 HORAS",
-    type: "EXTENSÃO",
-    date: "13/12/2023",
-    status: "Rejeitado",
-    statusColor: "text-red-500",
-  },
-  {
-    title: "SESCOMP 2023",
-    hours: "20 HORAS",
-    type: "EXTENSÃO",
-    date: "13/12/2023",
-    status: "Em análise",
-    statusColor: "text-yellow-500",
-  },
-  {
-    title: "SESCOMP 2023",
-    hours: "20 HORAS",
-    type: "EXTENSÃO",
-    date: "13/12/2023",
-    status: "Em análise",
-    statusColor: "text-yellow-500",
-  },
-  {
-    title: "SESCOMP 2024",
-    hours: "20 HORAS",
-    type: "EXTENSÃO",
-    date: "13/12/2023",
-    status: "Aprovado",
-    statusColor: "text-green-500",
-  },
-  {
-    title: "SESCOMP 2022",
-    hours: "20 HORAS",
-    type: "EXTENSÃO",
-    date: "13/12/2023",
-    status: "Rejeitado",
-    statusColor: "text-red-500",
-  },
-  {
-    title: "SESCOMP 2023",
-    hours: "20 HORAS",
-    type: "EXTENSÃO",
-    date: "13/12/2023",
-    status: "Em análise",
-    statusColor: "text-yellow-500",
-  },
-  {
-    title: "SESCOMP 2023",
-    hours: "20 HORAS",
-    type: "EXTENSÃO",
-    date: "13/12/2023",
-    status: "Em análise",
-    statusColor: "text-yellow-500",
-  },
-  {
-    title: "SESCOMP 2024",
-    hours: "20 HORAS",
-    type: "EXTENSÃO",
-    date: "13/12/2023",
-    status: "Aprovado",
-    statusColor: "text-green-500",
-  },
-  {
-    title: "SESCOMP 2022",
-    hours: "20 HORAS",
-    type: "EXTENSÃO",
-    date: "13/12/2023",
-    status: "Rejeitado",
-    statusColor: "text-red-500",
-  },
-  {
-    title: "SESCOMP 2023",
-    hours: "20 HORAS",
-    type: "EXTENSÃO",
-    date: "13/12/2023",
-    status: "Em análise",
-    statusColor: "text-yellow-500",
-  },
-  {
-    title: "SESCOMP 2023",
-    hours: "20 HORAS",
-    type: "EXTENSÃO",
-    date: "13/12/2023",
-    status: "Em análise",
-    statusColor: "text-yellow-500",
-  },
-  {
-    title: "SESCOMP 2024",
-    hours: "20 HORAS",
-    type: "EXTENSÃO",
-    date: "13/12/2023",
-    status: "Aprovado",
-    statusColor: "text-green-500",
-  },
-  {
-    title: "SESCOMP 2022",
-    hours: "20 HORAS",
-    type: "EXTENSÃO",
-    date: "13/12/2023",
-    status: "Rejeitado",
-    statusColor: "text-red-500",
-  },
-  {
-    title: "SESCOMP 2023",
-    hours: "20 HORAS",
-    type: "EXTENSÃO",
-    date: "13/12/2023",
-    status: "Em análise",
-    statusColor: "text-yellow-500",
-  },
-];
+const getStatus = (status: boolean | null) => {
+  if (status === null) return { label: "Em análise", color: "text-yellow-500" };
+  if (status === true) return { label: "Aprovado", color: "text-green-500" };
+  return { label: "Rejeitado", color: "text-red-500" };
+};
+
+interface Certificate {
+  title: string;
+  hours: string;
+  type: string;
+  date: string;
+  status: string;
+  statusColor: string;
+}
+
+const fetchData = async (
+  setCertificates: (value: SetStateAction<Certificate[]>) => void
+) => {
+  try {
+    const response = await fetch(
+      "http://127.0.0.1:8000/complementary_activity/student/1/"
+    );
+    if (!response.ok) throw new Error("Erro ao buscar dados");
+
+    const data = await response.json();
+    const formattedData = data.map(
+      (item: {
+        status: boolean | null;
+        workload: number;
+        description: string;
+        activity_name: string;
+      }) => {
+        const statusInfo = getStatus(item.status);
+        return {
+          title: item.description,
+          hours: `${item.workload} HORAS`,
+          type: `Tipo ${item.activity_name}`,
+          date: "13/12/2024",
+          status: statusInfo.label,
+          statusColor: statusInfo.color,
+        };
+      }
+    );
+    setCertificates(formattedData);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 const ModalFormsCertificados = ({
   openModal,
   setOpenModal,
 }: {
   openModal: boolean;
-  setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setOpenModal: (value: boolean) => void;
 }) => {
   return (
-    <div>
-      {openModal && (
-        <AlertDialog open={openModal} onOpenChange={setOpenModal}>
-          <AlertDialogContent className="max-w-[800px]">
-            <AlertDialogHeader className="flex flex-row justify-between">
-              <AlertDialogTitle className="text-2xl font-bold text-green-800 mb-4">
-                Submeter certificado
-              </AlertDialogTitle>
-              <AlertDialogCancel
-                className="border border-green-800"
-                onClick={() => setOpenModal(false)}
-              >
-                Cancel
-              </AlertDialogCancel>
-            </AlertDialogHeader>
-            <SubmitCertificateForm />
-            <AlertDialogFooter></AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      )}
-    </div>
+    openModal && (
+      <AlertDialog open={openModal} onOpenChange={setOpenModal}>
+        <AlertDialogContent className="max-w-[800px]">
+          <AlertDialogHeader className="flex flex-row justify-between">
+            <AlertDialogTitle className="text-2xl font-bold text-green-800 mb-4">
+              Submeter certificado
+            </AlertDialogTitle>
+            <AlertDialogCancel
+              className="border border-green-800"
+              onClick={() => setOpenModal(false)}
+            >
+              Fechar
+            </AlertDialogCancel>
+          </AlertDialogHeader>
+          <SubmitCertificateForm />
+          <AlertDialogFooter></AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    )
   );
 };
 
 export default function CertificadosEhorasComplementares() {
   const [openModal, setOpenModal] = useState(false);
+  const [certificates, setCertificates] = useState<Certificate[]>([]);
+
+  useEffect(() => {
+    fetchData(setCertificates);
+  }, []);
 
   return (
-    <section className="w-full flex ">
+    <section className="w-full flex">
       <Tabs
         defaultValue="submissaoDeCertificados"
-        className=" w-full flex flex-col gap-10 max-w-[1222px]"
+        className="w-full flex flex-col gap-10 max-w-[1222px]"
       >
         <TabsList className="grid w-full grid-cols-2 max-w-[550px]">
           <TabsTrigger value="horasComplementares">
@@ -226,7 +144,7 @@ export default function CertificadosEhorasComplementares() {
                 </tr>
               </thead>
               <tbody>
-                {data.map((item, index) => (
+                {certificates.map((item, index) => (
                   <tr key={index} className="border-t">
                     <td className="px-3 py-7">{item.title}</td>
                     <td className="px-3 py-7">{item.hours}</td>

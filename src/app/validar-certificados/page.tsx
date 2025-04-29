@@ -1,26 +1,84 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
-const data = [
-  {
-    id: 1,
-    name: "Natália Ruth Mesquita da Silva",
-    categoria: "Ensino",
-    description: "Programa de educação tutorial PET - SEDUC",
-    carga: "1.680",
-    pdfUrl: "http://127.0.0.1:8000/files/certificates/PDF-teste_S3GyuDm.pdf",
-  },
-];
+interface Certificate {
+  id: number;
+  student_name: string;
+  activity_name: string;
+  description: string;
+  workload: number;
+  certificate_file: string;
+}
 
 export default function ValidarCertificados() {
-  const [openRow, setOpenRow] = useState<number | null>(null);
+  const [certificates, setCertificates] = useState<Certificate[]>([]);
+  const [selectedCertificate, setSelectedCertificate] =
+    useState<Certificate | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const toggleRow = (id: number) => {
-    setOpenRow(openRow === id ? null : id);
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await fetch(
+          "http://127.0.0.1:8000/complementary_activity/coordenador/2"
+        );
+        const data = await response.json();
+
+        const formattedData = Array.isArray(data) ? data : [data];
+
+        setCertificates(
+          formattedData.map((item, index) => ({
+            id: item.id,
+            student_name: item.student_name,
+            activity_name: item.activity_name,
+            description: item.description,
+            workload: item.workload,
+            certificate_file: item.certificate_file,
+          }))
+        );
+      } catch (error) {
+        console.error("Erro ao buscar certificados:", error);
+      }
+    }
+
+    fetchData();
+  }, []);
+
+  const toggleRow = (certificate: Certificate) => {
+    setSelectedCertificate(certificate);
+    setIsDialogOpen(true);
+  };
+
+  const handleAction = async (id: number, status: boolean) => {
+    try {
+      await fetch(`http://127.0.0.1:8000/complementary_activity/${id}/`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          status: status,
+          feedback: "",
+        }),
+      });
+
+      setCertificates(certificates.filter((item) => item.id !== id));
+      setIsDialogOpen(false);
+    } catch (error) {
+      console.error("Erro ao enviar resposta:", error);
+    }
   };
 
   return (
@@ -47,8 +105,8 @@ export default function ValidarCertificados() {
               <thead>
                 <tr className="bg-gray-100 text-gray-700">
                   <th className="p-3 sticky top-0 bg-white z-10">Aluno</th>
-                  <th className="p-3 sticky top-0 bg-white z-10">Categoria</th>
-                  <th className="p-3 sticky top-0 bg-white z-10">Descrição</th>
+                  <th className="p-3 sticky top-0 bg-white z-10">Atividade</th>
+                  <th className="p-3 sticky top-0 bg-white z-10">Titulo</th>
                   <th className="p-3 sticky top-0 bg-white z-10">
                     Carga horária
                   </th>
@@ -56,37 +114,17 @@ export default function ValidarCertificados() {
               </thead>
 
               <tbody>
-                {data.map((item, index) => (
-                  <>
-                    <tr
-                      key={index}
-                      className="border-t cursor-pointer hover:bg-gray-100"
-                      onClick={() => toggleRow(item.id)}
-                    >
-                      <td className="px-3 py-4">{item.name}</td>
-                      <td className="px-3 py-4">{item.categoria}</td>
-                      <td className="px-3 py-4">{item.description}</td>
-                      <td className="px-3 py-4">{item.carga}</td>
-                    </tr>
-                    {openRow === item.id && (
-                      <tr>
-                        <td colSpan={4} className="p-4 bg-gray-50 border-t">
-                          <div className="mb-4">
-                            <iframe
-                              src="http://127.0.0.1:8000/files/certificates/PDF-teste_S3GyuDm.pdf"
-                              width="100%"
-                              height="500px"
-                              className="border rounded-lg"
-                            />
-                          </div>
-                          <div className="flex justify-end gap-4">
-                            <Button variant="destructive">Recusar</Button>
-                            <Button variant="default">Aceitar</Button>
-                          </div>
-                        </td>
-                      </tr>
-                    )}
-                  </>
+                {certificates.map((item) => (
+                  <tr
+                    key={item.id}
+                    className="border-t cursor-pointer hover:bg-gray-100"
+                    onClick={() => toggleRow(item)}
+                  >
+                    <td className="px-3 py-4">{item.student_name}</td>
+                    <td className="px-3 py-4">{item.activity_name}</td>
+                    <td className="px-3 py-4">{item.description}</td>
+                    <td className="px-3 py-4">{item.workload} h</td>
+                  </tr>
                 ))}
               </tbody>
             </table>
@@ -94,6 +132,44 @@ export default function ValidarCertificados() {
           </ScrollArea>
         </TabsContent>
       </Tabs>
+
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-[95vw] max-h-[95vh] w-full h-full overflow-auto">
+          <DialogHeader>
+            <DialogTitle>Visualizar Certificado</DialogTitle>
+          </DialogHeader>
+          {selectedCertificate && (
+            <div className="mb-4 h-full">
+              <iframe
+                src={selectedCertificate.certificate_file}
+                width="100%"
+                height="100%"
+                className="border rounded-lg min-h-[80vh]"
+              />
+            </div>
+          )}
+          <DialogFooter>
+            <Button
+              variant="destructive"
+              onClick={() =>
+                selectedCertificate &&
+                handleAction(selectedCertificate.id, false)
+              }
+            >
+              Recusar
+            </Button>
+            <Button
+              variant="default"
+              onClick={() =>
+                selectedCertificate &&
+                handleAction(selectedCertificate.id, true)
+              }
+            >
+              Aceitar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </section>
   );
 }
