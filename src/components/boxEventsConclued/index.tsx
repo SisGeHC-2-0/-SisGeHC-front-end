@@ -35,7 +35,7 @@ const BoxEvents = ({ events }: { events: Event[] }) => {
       .map((event: Event) => (
         <article key={event.id}>
           <h3 className="font-bold ml-[50px] py-5 text-[#3F4047] text-[25px]">
-            {event.curso}
+            {event.professorId.major.name}
           </h3>
           <div className="max-w-[1050px] mx-auto">
             <div className="flex items-center justify-between">
@@ -59,11 +59,11 @@ const BoxEvents = ({ events }: { events: Event[] }) => {
                     <span className="text-gray-500">Imagem não disponível</span>
                   </div>
                 )}
-
                 <div className="flex flex-col gap-2 max-w-[296px]">
                   <h2 className="text-[#016A2F] text-[38px] font-bold">
-                    {event.title}
+                    {event.name}
                   </h2>
+
                   <p className="text-[19px] text-[#707070] leading-6">
                     {formatDate(event.date)}
                     <br />

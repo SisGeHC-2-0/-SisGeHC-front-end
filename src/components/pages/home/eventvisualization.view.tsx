@@ -67,6 +67,7 @@ export default function EventView() {
   }, []);
 
   return (
+
     <div className="max-w-[1200px] flex flex-col gap-10 mx-auto">
       {Object.entries(eventsByMajor).map(([major, events]) => (
         <div key={major}>
@@ -76,6 +77,8 @@ export default function EventView() {
       ))}
     </div>
   );
+  
+
 }
 
 const BoxEventView = ({ event, enrolledEvents, enrollInEvent }) => {

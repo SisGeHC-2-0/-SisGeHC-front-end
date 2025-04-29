@@ -14,6 +14,7 @@ import {
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
+
 const fetchEvents = async () => {
   try {
     const responseEvents = await fetch("http://127.0.0.1:8000/event/student/1");
@@ -124,6 +125,7 @@ export default function CertificadosEhorasComplementares() {
             Eventos anteriores
           </h2>
           <ScrollArea className="w-full h-[calc(100vh-300px)] border rounded-lg">
+
             <BoxEventsConclued events={events} />
             <ScrollBar orientation="horizontal" />
           </ScrollArea>
