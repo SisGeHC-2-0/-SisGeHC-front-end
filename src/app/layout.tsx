@@ -27,13 +27,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased relative`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased relative w-full h-screen bg-[url(@/imgs/bg_img.png)] bg-cover bg-center bg-no-repeat`}
       >
-        <Header />
-        <div className="flex pt-[20px] gap-[21px] max-w-[1350px] mx-auto px-2 w-full">
-          <LeftNavBar />
-          {children}
-        </div>
+        {children}
       </body>
     </html>
   );

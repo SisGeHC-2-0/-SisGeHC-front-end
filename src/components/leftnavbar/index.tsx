@@ -13,13 +13,13 @@ export const LeftNavBar = () => {
         <Link href={"/"}>
           <IconCalendarWeek stroke={2} size={42} color="#fff" />
         </Link>
-        <Link href={"/validar-certificados"}>
+        <Link href={"usuario/validar-certificados"}>
           <IconCalendarCheck stroke={2} size={42} color="#fff" />
         </Link>
-        <Link href={"/certificados"}>
+        <Link href={"usuario/certificados"}>
           <IconCalendarUp stroke={2} size={42} color="#fff" />
         </Link>
-        <Link href={"/perfil"}>
+        <Link href={"usuario/perfil"}>
           <IconUserCircle stroke={2} size={42} color="#fff" />
         </Link>
       </section>
