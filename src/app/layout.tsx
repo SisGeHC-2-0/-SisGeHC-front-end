@@ -27,7 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased relative w-full h-screen bg-[url(@/imgs/bg_img.png)] bg-cover bg-center bg-no-repeat`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased relative w-full h-screen bg-[url(@/imgs/bg_img.png)] bg-cover bg-center bg-no-repeat bg-fixed`}
       >
         {children}
       </body>
