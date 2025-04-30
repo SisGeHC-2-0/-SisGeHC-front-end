@@ -23,7 +23,7 @@ export default function ProfessorForms () {
                 <InputFormField 
                     errors={errors} 
                     required 
-                    placeholder="Digite sua senha." 
+                    placeholder="Digite seu nome."
                     name="Nome"
                     type="text"
                     register={register}

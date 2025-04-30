@@ -27,8 +27,9 @@ export default function AlunoForms () {
             <div className="w-[50%] flex flex-col gap-[1.5rem]">                
                 <InputFormField 
                     errors={errors} 
-                    required 
-                    placeholder="Digite sua senha." 
+                    required
+                    //Alterei só esse campo porque tava "Digite sua senha."
+                    placeholder="Digite seu nome."
                     name="Nome"
                     type="text"
                     register={register}
