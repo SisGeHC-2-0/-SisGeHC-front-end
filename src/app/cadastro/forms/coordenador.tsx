@@ -15,9 +15,6 @@ export default function CoordenadorForms () {
 
     errors.email
     return <div>
-
-        formulario de coordenador
-
         <form onSubmit={handleSubmit(onSubmit)} className="w-[100%] flex justify-center items-center">
             
             <div className="w-[50%] flex flex-col gap-[1.5rem]">                

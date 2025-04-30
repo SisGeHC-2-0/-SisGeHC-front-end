@@ -2,6 +2,13 @@
 
 import { FieldValues, useForm } from "react-hook-form"
 import InputFormField from "./inputFormField";
+import { Button } from "@/components/ui/button";
+import { z } from "zod";
+
+
+const AlunoFormData = z.object({
+    name: z.string()
+});
 
 export default function AlunoForms () {
     const {register,
@@ -15,9 +22,6 @@ export default function AlunoForms () {
 
     errors.email
     return <div>
-
-        Formualrio de Aluno
-
         <form onSubmit={handleSubmit(onSubmit)} className="w-[100%] flex justify-center items-center">
             
             <div className="w-[50%] flex flex-col gap-[1.5rem]">                
@@ -53,6 +57,15 @@ export default function AlunoForms () {
                     type="password"
                     register={register}
                 />
+                <Button
+                    variant="default"
+                    onClick={() =>
+                        {}
+                    }
+                    className="h-[7vh] bg-green-700 font-bold text-md"
+                    >
+                        Criar conta
+                </Button>
             </div>
 
 

@@ -10,7 +10,7 @@ const CorePanel = (props : HTMLProps<HTMLDivElement>) => {
 
     return (
         <div 
-        className={ "bg-white rounded-xl shadow-l " + className }
+        className={ "bg-white rounded-xl shadow-l h-fit " + className }
         {...rest}>
             {props.children}
         </div>
