@@ -11,23 +11,33 @@ import {zodResolver} from "@hookform/resolvers/zod"
 
 const fileSizeLimit = 5 * 1024 * 1024; // 5MB
 
+const containsUppercase = (ch: string) => /[A-Z]/.test(ch);
+const containsLowercase = (ch: string) => /[a-z]/.test(ch);
+
 const ProfessorFormSchema = z.object({
     Nome: z.string().nonempty("Nome é obrigatorio"),
-    Email: z.string().email("Email Invalido").nonempty("Email é obrigatorio"),
+    Email: z.string().email("Email mal formatado").nonempty("Email é obrigatorio"),
     Matricula : z.string().nonempty("Matricula é obrigatoria"),
-    Senha: z.string().nonempty("Senha é obrigatoria"),
     Confirme : z.string().nonempty("Por favor confirme sua senha"), 
     Curso: z.string().nonempty("Selecione seu curso"), 
     
-    Foto : z.instanceof(FileList).refine(
-        file => file.length == 0 || [
-                 "image/png", 
-                 "image/jpeg",
-                 "image/jpg"
-                ].includes(file[0].type), {message: "Tipo de arquivo invalido. Permitidos somente .jpeg e .png"}
-    ).refine(file => file.length == 0 || file[0].size <= fileSizeLimit, {message: "Tamanho do arquivo não pode superar 5MB"})
-    , 
-}).refine(({Confirme, Senha}) => Confirme == Senha, 
+    
+    Senha: z.string().nonempty("Senha é obrigatoria").min(8, "Sua senha deve ter mais de 8 caracteres")
+                .refine(e => /[A-Z]/.test(e), {message: "Sua senha deve conter ao menos uma letra maiuscula"})
+                .refine(e => /[a-z]/.test(e), {message: "Sua senha deve conter ao menos uma letra minuscula"})
+                .refine(e => /[0-1]/.test(e), {message: "Sua senha deve conter ao menos um caractere numerico"}),
+
+
+    Foto : z.instanceof(FileList)
+                .refine( file => file.length == 0 || [
+                            "image/png", 
+                            "image/jpeg",
+                            "image/jpg"
+                            ].includes(file[0].type), {message: "Tipo de arquivo invalido. Permitidos somente .jpeg e .png"})
+                .refine(file => file.length == 0 || file[0].size <= fileSizeLimit, {message: "Tamanho do arquivo não pode superar 5MB"})}
+
+
+).refine(({Confirme, Senha}) => Confirme == Senha, 
            {
             message: "Senhas estão diferentes", 
             path : ["Confirme"]
@@ -86,8 +96,8 @@ export default function ProfessorForms() {
 
     return (
         <div>
-            <form onSubmit={handleSubmit(onSubmit)} className="w-full flex justify-center items-center" encType="multipart/form-data">
-                <div className="w-1/2 flex flex-col gap-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="w-full flex justify-center items-center mt-[1rem]" encType="multipart/form-data">
+                <div className="w-1/2 flex flex-col gap-[1.7rem]">
                     <InputFormField
                         errors={errors.Nome}
                         required

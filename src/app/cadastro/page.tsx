@@ -19,13 +19,11 @@ export default function Cadastro()
                 <h2 className="font-bold text-xl">Cadastro de Usuário</h2>
 
                 </div>
-
                 <SelectMenuPage pages={[
                     {name : "Aluno", content: <AlunoForms/>},
                     {name : "Professor", content: <ProfessorForms/>},
                     {name : "Coordenador", content: <CoordenadorForms/>},
-                    // {name : "BOSTA", content: <CoordenadorForms/>},
-                    ]}/>
+                ]}/>
             </CorePanel>
         </div>
     );
