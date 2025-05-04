@@ -1,7 +1,9 @@
 import { MdOutlineErrorOutline } from "react-icons/md";
-import { FieldErrors, FieldValues, UseFormRegister } from "react-hook-form";
+import { FieldError, FieldErrors, FieldErrorsImpl, FieldValues, Merge, UseFormRegister } from "react-hook-form";
+import { HtmlProps } from "next/dist/shared/lib/html-context.shared-runtime";
+import { HTMLProps } from "react";
 
-export default function InputFormField(
+export default function InputFormField<T extends FieldValues>(
                                         {
                                             name, 
                                             type, 
@@ -15,8 +17,8 @@ export default function InputFormField(
                                             type : string, 
                                             placeholder? : string, 
                                             required? : boolean, 
-                                            register : UseFormRegister<FieldValues>,
-                                            errors : FieldErrors<FieldValues>
+                                            register : HTMLProps<HTMLInputElement>,
+                                            errors : FieldError | undefined | Merge<FieldError, FieldErrorsImpl<any>>
                                         }
                                     )
 {
@@ -30,19 +32,19 @@ export default function InputFormField(
             {/* <span className="ml-[100%]"></span> */}
             {
 
-                errors[name] ? 
+                errors ? 
                 <span className="text-red-500 ml-auto flex flex-row items-center justify-center">   
                 <MdOutlineErrorOutline/> 
-                    {`${errors[name].message}`}
+                    {`${errors.message}`}
                 </span> : <></>
 
             }
         </div>
         <input 
             type={type} 
-            {...register(name)} 
+            {...register} 
             placeholder={placeholder} 
-            className="outline-none rounded-md border-solid border-[1px] border-gray-300 py-[1rem] px-[1rem] w-[100%]"
-        />
+            className={type != "file"? "outline-none rounded-md border-solid border-[1px] border-gray-300 p-[1rem] w-[100%]" : "w-full"}
+/>
     </div>
 }
