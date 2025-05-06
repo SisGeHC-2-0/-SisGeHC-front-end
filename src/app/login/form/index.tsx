@@ -6,8 +6,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
-
+import Link from "next/link"
 
 const LoginFormSchema = z.object({
     email: z.string().email("Email mal formatado").nonempty("Email é obrigatorio"),
@@ -19,12 +18,12 @@ type LoginSchema = z.infer<typeof LoginFormSchema>
 export default function LoginForm()
 {
 
-    const { register, handleSubmit, formState: { errors, isValid, isDirty } } = useForm<LoginSchema>({resolver: zodResolver(LoginFormSchema) , mode: "onChange"});
+    const { register, handleSubmit, formState: { errors, isValid } } = useForm<LoginSchema>({resolver: zodResolver(LoginFormSchema) , mode: "onChange"});
 
     const onSubmit = (data : LoginSchema) => {
         
 
-        data.email
+        // data.email
 
     }
 

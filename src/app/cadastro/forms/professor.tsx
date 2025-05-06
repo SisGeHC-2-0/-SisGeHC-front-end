@@ -11,9 +11,6 @@ import {zodResolver} from "@hookform/resolvers/zod"
 
 const fileSizeLimit = 5 * 1024 * 1024; // 5MB
 
-const containsUppercase = (ch: string) => /[A-Z]/.test(ch);
-const containsLowercase = (ch: string) => /[a-z]/.test(ch);
-
 const ProfessorFormSchema = z.object({
     Nome: z.string().nonempty("Nome é obrigatorio"),
     Email: z.string().email("Email mal formatado").nonempty("Email é obrigatorio"),
@@ -47,8 +44,8 @@ const ProfessorFormSchema = z.object({
 type ProfessorSchema = z.infer<typeof ProfessorFormSchema>;
 
 export default function ProfessorForms() {
-    const { register, handleSubmit, formState: { errors } } = useForm<ProfessorSchema>({resolver: zodResolver(ProfessorFormSchema)});
-    const [majors, setMajors] = useState<{ id: number, nome: string }[]>([{id: 1, nome: "z"}]);
+    const { register, handleSubmit, formState: { errors } } = useForm<ProfessorSchema>({resolver: zodResolver(ProfessorFormSchema), mode: "onChange"});
+    const [majors, setMajors] = useState<{ id: number, nome: string }[]>([]);
 
     // Busca os cursos no backend
     useEffect(() => {
@@ -66,6 +63,8 @@ export default function ProfessorForms() {
     }, []);
 
     const onSubmit = async (data: ProfessorSchema) => {
+        console.log(data)
+        
         const formData = new FormData();
 
         formData.append("name", data.Nome);
@@ -109,7 +108,7 @@ export default function ProfessorForms() {
                     <InputFormField
                         errors={errors.Email}
                         required
-                        placeholder="exemplo@aluno.uece.br"
+                        placeholder="exemplo@uece.br"
                         name="Email"
                         type="email"
                         register={register("Email")}

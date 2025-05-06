@@ -1,6 +1,6 @@
+
 import { MdOutlineErrorOutline } from "react-icons/md";
 import { FieldError, FieldErrors, FieldErrorsImpl, FieldValues, Merge, UseFormRegister } from "react-hook-form";
-import { HtmlProps } from "next/dist/shared/lib/html-context.shared-runtime";
 import { HTMLProps } from "react";
 
 export default function InputFormField<T extends FieldValues>(
